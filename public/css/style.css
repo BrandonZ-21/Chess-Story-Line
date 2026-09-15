@@ -194,6 +194,7 @@ a { color: inherit; }
 
 .join-row .mode-btn { flex: 0 0 auto; padding: 10px 20px; }
 
+<<<<<<< HEAD
 /* ---------- Play layout (board + buffs panel) ---------- */
 
 .play-layout {
@@ -256,10 +257,37 @@ a { color: inherit; }
 
 .sq {
   position: absolute;
+=======
+/* ---------- Board ---------- */
+
+.board-root {
+  position: relative;
+  margin-top: 12px;
+}
+
+.board {
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  grid-template-rows: repeat(8, 1fr);
+  width: min(90vw, 560px);
+  aspect-ratio: 1 / 1;
+  border: 6px solid var(--gold);
+  border-radius: 4px;
+  overflow: hidden;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+}
+
+.sq {
+  position: relative;
+>>>>>>> 724744982809178fde9a8bfd9122703b132874db
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
+<<<<<<< HEAD
+=======
+  user-select: none;
+>>>>>>> 724744982809178fde9a8bfd9122703b132874db
 }
 
 .sq.light { background: var(--square-light); }
@@ -296,6 +324,7 @@ a { color: inherit; }
   border: 4px solid var(--square-capture);
 }
 
+<<<<<<< HEAD
 .drag-hint {
   margin: 10px 2px 0;
   font-size: 12px;
@@ -354,6 +383,20 @@ a { color: inherit; }
 
 .piece-glyph.buffed {
   filter: drop-shadow(0 0 8px var(--gold-bright)) drop-shadow(0 0 14px var(--gold));
+=======
+.piece {
+  position: relative;
+  font-size: min(9vw, 48px);
+  line-height: 1;
+  z-index: 1;
+}
+
+.piece-w { color: #f4ead0; text-shadow: 0 1px 2px rgba(0,0,0,0.8), 0 0 1px #000; }
+.piece-b { color: #1a1512; text-shadow: 0 1px 2px rgba(0,0,0,0.4); }
+
+.piece.buffed {
+  filter: drop-shadow(0 0 6px var(--gold-bright));
+>>>>>>> 724744982809178fde9a8bfd9122703b132874db
 }
 
 .promo-picker {
@@ -382,6 +425,7 @@ a { color: inherit; }
 }
 
 .promo-picker button:hover { background: rgba(201,162,39,0.2); }
+<<<<<<< HEAD
 
 /* ---------- Buffs panel ---------- */
 
@@ -448,3 +492,5 @@ a { color: inherit; }
   font-style: italic;
   margin: 4px 0 0;
 }
+=======
+>>>>>>> 724744982809178fde9a8bfd9122703b132874db

@@ -1,14 +1,20 @@
 import { createInitialState, applyMove, getGameStatus } from '../rules.js';
 import { createBoardView } from './board-ui.js';
+<<<<<<< HEAD
 import { createBuffPanel } from './buff-panel.js';
+=======
+>>>>>>> 724744982809178fde9a8bfd9122703b132874db
 
 let state = createInitialState(true);
 
 const statusEl = document.getElementById('status');
 const root = document.getElementById('board-root');
+<<<<<<< HEAD
 const panelRoot = document.getElementById('buff-panel');
 
 const panel = createBuffPanel(panelRoot, { getState: () => state });
+=======
+>>>>>>> 724744982809178fde9a8bfd9122703b132874db
 
 const view = createBoardView(root, {
   getState: () => state,
@@ -21,7 +27,10 @@ const view = createBoardView(root, {
     if (next) {
       state = next;
       updateStatus();
+<<<<<<< HEAD
       panel.render();
+=======
+>>>>>>> 724744982809178fde9a8bfd9122703b132874db
     }
   },
 });
@@ -44,7 +53,10 @@ document.getElementById('new-game').addEventListener('click', () => {
   state = createInitialState(true);
   view.clearSelection();
   updateStatus();
+<<<<<<< HEAD
   panel.render();
+=======
+>>>>>>> 724744982809178fde9a8bfd9122703b132874db
 });
 
 updateStatus();
