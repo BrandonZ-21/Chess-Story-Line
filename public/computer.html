@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Story Line — Vs. Computer</title>
+<link rel="stylesheet" href="/css/style.css" />
+</head>
+<body class="play">
+  <header class="play-header">
+    <a class="back-link" href="/">← Story Line</a>
+    <h1>Vs. Computer</h1>
+    <button id="new-game" class="ghost-btn" type="button">Change Side</button>
+  </header>
+
+  <div id="setup" class="setup-card">
+    <p>Choose your side:</p>
+    <div class="side-choice">
+      <button data-side="w" class="mode-btn" type="button">Play White</button>
+      <button data-side="b" class="mode-btn" type="button">Play Black</button>
+    </div>
+  </div>
+
+  <div id="game" class="hidden">
+    <p id="status" class="status" aria-live="polite"></p>
+    <div id="board-root" class="board-root"></div>
+  </div>
+
+  <script type="module" src="/js/computer-page.js"></script>
+</body>
+</html>

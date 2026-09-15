@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Story Line — Online Room</title>
+<link rel="stylesheet" href="/css/style.css" />
+</head>
+<body class="play">
+  <header class="play-header">
+    <a class="back-link" href="/">← Story Line</a>
+    <h1>Online Room</h1>
+    <button id="new-game" class="ghost-btn" type="button">New Game</button>
+  </header>
+
+  <div id="join" class="setup-card">
+    <p>Enter a room code — share it with your opponent so you both join the same room.</p>
+    <div class="join-row">
+      <input id="room-code" maxlength="8" placeholder="ROOM CODE" autocomplete="off" />
+      <button id="join-btn" class="mode-btn" type="button">Join</button>
+    </div>
+  </div>
+
+  <div id="game" class="hidden">
+    <p class="room-line">Room <strong id="room-label"></strong> · <span id="role"></span></p>
+    <p id="presence" class="presence"></p>
+    <p id="status" class="status" aria-live="polite"></p>
+    <div id="board-root" class="board-root"></div>
+  </div>
+
+  <script type="module" src="/js/online-page.js"></script>
+</body>
+</html>

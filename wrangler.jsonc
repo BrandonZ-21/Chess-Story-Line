@@ -1,0 +1,22 @@
+{
+  "name": "story-line-chess",
+  "compatibility_date": "2026-09-15",
+  "main": "src/worker.js",
+  "assets": {
+    "directory": "public",
+    "binding": "ASSETS",
+    "not_found_handling": "single-page-application",
+    "run_worker_first": ["/ws/*"]
+  },
+  "durable_objects": {
+    "bindings": [
+      { "name": "ROOM", "class_name": "ChessRoom" }
+    ]
+  },
+  "migrations": [
+    { "tag": "v1", "new_sqlite_classes": ["ChessRoom"] }
+  ],
+  "observability": {
+    "enabled": true
+  }
+}
