@@ -33,8 +33,13 @@ export function createBoardView(root, options) {
   let legalTargets = [];
   let rigX = 55; // tilt, degrees — 0 = looking edge-on, 90 = straight down
   let rigY = 0; // spin, degrees — free-running, orbits all the way around
-  let dragging = false;
+  let pointerDown = false; // true from pointerdown to pointerup, regardless of movement
+  let dragging = false; // true only once movement has crossed DRAG_THRESHOLD_PX
   let lastPointer = null;
+  let downPointer = null;
+  let suppressNextClick = false;
+
+  const DRAG_THRESHOLD_PX = 6; // a click that wobbles less than this still counts as a click
 
   root.classList.add('board-root');
 
@@ -75,13 +80,24 @@ export function createBoardView(root, options) {
   }
 
   scene.addEventListener('pointerdown', (e) => {
-    dragging = true;
+    pointerDown = true;
+    dragging = false;
+    downPointer = { x: e.clientX, y: e.clientY };
     lastPointer = { x: e.clientX, y: e.clientY };
-    scene.classList.add('grabbing');
     scene.setPointerCapture(e.pointerId);
   });
   scene.addEventListener('pointermove', (e) => {
-    if (!dragging) return;
+    if (!pointerDown) return;
+    if (!dragging) {
+      // Don't start rotating until the pointer has actually moved — a
+      // click that wobbles a couple pixels should still select the square,
+      // not spin the board out from under it.
+      const totalDx = e.clientX - downPointer.x;
+      const totalDy = e.clientY - downPointer.y;
+      if (Math.hypot(totalDx, totalDy) < DRAG_THRESHOLD_PX) return;
+      dragging = true;
+      scene.classList.add('grabbing');
+    }
     const dx = e.clientX - lastPointer.x;
     const dy = e.clientY - lastPointer.y;
     lastPointer = { x: e.clientX, y: e.clientY };
@@ -90,12 +106,29 @@ export function createBoardView(root, options) {
     applyRig();
   });
   const stopDrag = () => {
+    pointerDown = false;
+    if (dragging) {
+      // A real drag just happened — swallow the click that's about to
+      // fire on whatever square the pointer happens to be over now, so
+      // letting go of a drag never also selects/moves a piece.
+      suppressNextClick = true;
+    }
     dragging = false;
     scene.classList.remove('grabbing');
   };
   scene.addEventListener('pointerup', stopDrag);
   scene.addEventListener('pointerleave', stopDrag);
   scene.addEventListener('pointercancel', stopDrag);
+  scene.addEventListener(
+    'click',
+    (e) => {
+      if (!suppressNextClick) return;
+      suppressNextClick = false;
+      e.stopPropagation();
+      e.preventDefault();
+    },
+    true
+  );
   window.addEventListener('resize', () => render());
 
   function clearSelection() {
