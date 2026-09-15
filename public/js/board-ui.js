@@ -10,11 +10,7 @@
 // way the board is currently turned.
 
 import { getLegalMovesForSquare } from '../rules.js';
-
-const UNICODE = {
-  w: { k: '♔', q: '♕', r: '♖', b: '♗', n: '♘', p: '♙' },
-  b: { k: '♚', q: '♛', r: '♜', b: '♝', n: '♞', p: '♟' },
-};
+import { pieceMarkup } from './piece-art.js';
 
 const PROMO_CHOICES = [
   { type: 'q', label: 'Queen' },
@@ -151,10 +147,14 @@ export function createBoardView(root, options) {
           lift.className = 'piece-lift';
           lift.style.transform = `translateZ(${PIECE_LIFT_PX}px)`;
 
+          const figureSize = cellSize * 0.86;
           const glyph = document.createElement('div');
           glyph.className = `piece-glyph piece-${piece.color}${piece.buffed ? ' buffed' : ''}`;
-          glyph.style.fontSize = `${cellSize * 0.62}px`;
-          glyph.textContent = UNICODE[piece.color][piece.type];
+          glyph.style.width = `${figureSize}px`;
+          glyph.style.height = `${figureSize}px`;
+          glyph.style.marginLeft = `${-figureSize / 2}px`;
+          glyph.style.marginTop = `${-figureSize * 0.72}px`;
+          glyph.innerHTML = pieceMarkup(piece.type);
           glyph.title = piece.buffed ? 'Buffed by a capture' : '';
 
           lift.appendChild(glyph);
