@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 // Story Line — shared 3D board rendering + click-to-move UI. Used by the
 // hot-seat, vs. computer, and online screens alike.
 //
@@ -9,11 +8,6 @@
 // vertical "lift" and counter-rotate every frame so their glyphs always
 // face the camera (a standard CSS-3D "billboard" trick), no matter which
 // way the board is currently turned.
-=======
-// Story Line — shared board rendering + click-to-move UI. Used by the
-// hot-seat, vs. computer, and online screens alike so there's one place
-// that knows how to draw a board and turn clicks into move attempts.
->>>>>>> 724744982809178fde9a8bfd9122703b132874db
 
 import { getLegalMovesForSquare } from '../rules.js';
 
@@ -29,17 +23,11 @@ const PROMO_CHOICES = [
   { type: 'n', label: 'Knight' },
 ];
 
-<<<<<<< HEAD
 const PIECE_LIFT_PX = 26; // how tall pieces stand above the board
 
 // options:
 //   getState()            -> current game state (rules.js shape)
 //   orientation             'w' (White at bottom, default) or 'b'
-=======
-// options:
-//   getState()            -> current game state (rules.js shape)
-//   orientation            'w' (White at bottom, default) or 'b'
->>>>>>> 724744982809178fde9a8bfd9122703b132874db
 //   interactive()          -> bool, whether clicks should do anything right now
 //   onAttemptMove(from,to,promotionChoice) -> called when the player completes a move
 export function createBoardView(root, options) {
@@ -47,7 +35,6 @@ export function createBoardView(root, options) {
 
   let selected = null;
   let legalTargets = [];
-<<<<<<< HEAD
   let rigX = 55; // tilt, degrees — 0 = looking edge-on, 90 = straight down
   let rigY = 0; // spin, degrees — free-running, orbits all the way around
   let dragging = false;
@@ -72,12 +59,6 @@ export function createBoardView(root, options) {
   hint.className = 'drag-hint';
   hint.textContent = 'Drag the board to look around while you play.';
   root.appendChild(hint);
-=======
-
-  const boardEl = document.createElement('div');
-  boardEl.className = 'board';
-  root.appendChild(boardEl);
->>>>>>> 724744982809178fde9a8bfd9122703b132874db
 
   const promoEl = document.createElement('div');
   promoEl.className = 'promo-picker hidden';
@@ -87,7 +68,6 @@ export function createBoardView(root, options) {
     return orientation === 'w' ? { r: 7 - row, c: col } : { r: row, c: 7 - col };
   }
 
-<<<<<<< HEAD
   function applyRig() {
     rig.style.transform = `rotateX(${rigX}deg) rotateY(${rigY}deg)`;
     // Exact inverse of the rig's rotation, so glyphs stay flat-on to the
@@ -122,8 +102,6 @@ export function createBoardView(root, options) {
   scene.addEventListener('pointercancel', stopDrag);
   window.addEventListener('resize', () => render());
 
-=======
->>>>>>> 724744982809178fde9a8bfd9122703b132874db
   function clearSelection() {
     selected = null;
     legalTargets = [];
@@ -132,18 +110,13 @@ export function createBoardView(root, options) {
   function render() {
     const state = getState();
     boardEl.innerHTML = '';
-<<<<<<< HEAD
     piecesLayer.innerHTML = '';
     const lastMove = state.moveLog[state.moveLog.length - 1];
     const cellSize = boardEl.clientWidth / 8 || 60;
-=======
-    const lastMove = state.moveLog[state.moveLog.length - 1];
->>>>>>> 724744982809178fde9a8bfd9122703b132874db
 
     for (let row = 0; row < 8; row++) {
       for (let col = 0; col < 8; col++) {
         const { r, c } = boardCoordsFromDisplay(row, col);
-<<<<<<< HEAD
 
         const sq = document.createElement('div');
         const dark = (r + c) % 2 === 0;
@@ -152,16 +125,10 @@ export function createBoardView(root, options) {
         sq.style.top = `${row * cellSize}px`;
         sq.style.width = `${cellSize}px`;
         sq.style.height = `${cellSize}px`;
-=======
-        const sq = document.createElement('div');
-        const dark = (r + c) % 2 === 0;
-        sq.className = `sq ${dark ? 'dark' : 'light'}`;
->>>>>>> 724744982809178fde9a8bfd9122703b132874db
 
         if (lastMove && ((lastMove.from.r === r && lastMove.from.c === c) || (lastMove.to.r === r && lastMove.to.c === c))) {
           sq.classList.add('last-move');
         }
-<<<<<<< HEAD
         if (selected && selected.r === r && selected.c === c) sq.classList.add('selected');
         const target = legalTargets.find((m) => m.to.r === r && m.to.c === c);
         if (target) sq.classList.add(target.isCapture ? 'legal-capture' : 'legal-move');
@@ -197,27 +164,6 @@ export function createBoardView(root, options) {
       }
     }
     applyRig();
-=======
-        if (selected && selected.r === r && selected.c === c) {
-          sq.classList.add('selected');
-        }
-        const target = legalTargets.find((m) => m.to.r === r && m.to.c === c);
-        if (target) sq.classList.add(target.isCapture ? 'legal-capture' : 'legal-move');
-
-        const piece = state.board[r][c];
-        if (piece) {
-          const span = document.createElement('span');
-          span.className = `piece piece-${piece.color}${piece.buffed ? ' buffed' : ''}`;
-          span.textContent = UNICODE[piece.color][piece.type];
-          span.title = piece.buffed ? 'Buffed by a capture' : '';
-          sq.appendChild(span);
-        }
-
-        sq.addEventListener('click', () => handleClick(r, c));
-        boardEl.appendChild(sq);
-      }
-    }
->>>>>>> 724744982809178fde9a8bfd9122703b132874db
   }
 
   function handleClick(r, c) {

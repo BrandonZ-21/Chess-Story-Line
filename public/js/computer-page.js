@@ -1,27 +1,18 @@
 import { createInitialState, applyMove, getGameStatus } from '../rules.js';
 import { createBoardView } from './board-ui.js';
-<<<<<<< HEAD
 import { createBuffPanel } from './buff-panel.js';
-=======
->>>>>>> 724744982809178fde9a8bfd9122703b132874db
 import { pickComputerMove } from './ai.js';
 
 let state = null;
 let humanColor = 'w';
 let view = null;
-<<<<<<< HEAD
 let panel = null;
-=======
->>>>>>> 724744982809178fde9a8bfd9122703b132874db
 
 const setupEl = document.getElementById('setup');
 const gameEl = document.getElementById('game');
 const statusEl = document.getElementById('status');
 const root = document.getElementById('board-root');
-<<<<<<< HEAD
 const panelRoot = document.getElementById('buff-panel');
-=======
->>>>>>> 724744982809178fde9a8bfd9122703b132874db
 
 document.querySelectorAll('[data-side]').forEach((btn) => {
   btn.addEventListener('click', () => {
@@ -55,19 +46,13 @@ function startGame() {
       if (next) {
         state = next;
         updateStatus();
-<<<<<<< HEAD
         panel.render();
-=======
->>>>>>> 724744982809178fde9a8bfd9122703b132874db
         maybeComputerMove();
       }
     },
   });
-<<<<<<< HEAD
   if (!panel) panel = createBuffPanel(panelRoot, { getState: () => state });
   else panel.render();
-=======
->>>>>>> 724744982809178fde9a8bfd9122703b132874db
 
   updateStatus();
   maybeComputerMove();
@@ -84,10 +69,7 @@ function maybeComputerMove() {
     }
     view.render();
     updateStatus();
-<<<<<<< HEAD
     panel.render();
-=======
->>>>>>> 724744982809178fde9a8bfd9122703b132874db
   }, 50);
 }
 

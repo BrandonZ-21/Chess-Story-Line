@@ -1,18 +1,12 @@
 import { createBoardView } from './board-ui.js';
-<<<<<<< HEAD
 import { createBuffPanel } from './buff-panel.js';
-=======
->>>>>>> 724744982809178fde9a8bfd9122703b132874db
 import { connectRoom } from './online-client.js';
 
 let state = null;
 let gameStatus = null;
 let myRole = null;
 let view = null;
-<<<<<<< HEAD
 let panel = null;
-=======
->>>>>>> 724744982809178fde9a8bfd9122703b132874db
 let room = null;
 
 const joinEl = document.getElementById('join');
@@ -21,10 +15,7 @@ const statusEl = document.getElementById('status');
 const presenceEl = document.getElementById('presence');
 const roleEl = document.getElementById('role');
 const root = document.getElementById('board-root');
-<<<<<<< HEAD
 const panelRoot = document.getElementById('buff-panel');
-=======
->>>>>>> 724744982809178fde9a8bfd9122703b132874db
 const codeInput = document.getElementById('room-code');
 
 document.getElementById('join-btn').addEventListener('click', () => {
@@ -57,10 +48,7 @@ function handleMessage(msg) {
   } else if (msg.type === 'state') {
     applyState(msg.payload);
     if (view) view.render();
-<<<<<<< HEAD
     if (panel) panel.render();
-=======
->>>>>>> 724744982809178fde9a8bfd9122703b132874db
   } else if (msg.type === 'presence') {
     presenceEl.textContent = `White: ${msg.payload.white ? 'connected' : 'waiting'} · Black: ${msg.payload.black ? 'connected' : 'waiting'} · Watching: ${msg.payload.spectators}`;
   } else if (msg.type === 'error') {
@@ -75,11 +63,8 @@ function applyState(s) {
 }
 
 function ensureView() {
-<<<<<<< HEAD
   if (!panel) panel = createBuffPanel(panelRoot, { getState: () => state });
   else panel.render();
-=======
->>>>>>> 724744982809178fde9a8bfd9122703b132874db
   if (view) { view.render(); return; }
   view = createBoardView(root, {
     getState: () => state,
