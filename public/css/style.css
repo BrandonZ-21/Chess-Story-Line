@@ -467,6 +467,154 @@ a { color: inherit; }
     drop-shadow(0 0 14px var(--gold));
 }
 
+/* ---------- Capture effects — one distinct burst per piece type ---------- */
+
+.capture-fx {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 0;
+  height: 0;
+  pointer-events: none;
+  z-index: 6;
+}
+
+.fx-dot, .fx-line, .fx-glow, .fx-rays, .fx-ring, .fx-debris, .fx-spark {
+  position: absolute;
+  left: 0;
+  top: 0;
+  border-radius: 50%;
+}
+
+/* Pawn — a quick jab: a flash plus three short thrust lines. */
+.fx-pawn-flash {
+  width: 14px; height: 14px; margin: -7px 0 0 -7px;
+  background: radial-gradient(circle, #fff, rgba(255,255,255,0) 70%);
+  animation: fxFlash 0.3s ease-out forwards;
+}
+.fx-pawn-line {
+  width: 22px; height: 3px; margin-top: -1.5px;
+  background: linear-gradient(90deg, #fff, transparent);
+  border-radius: 2px;
+  animation: fxJab 0.3s ease-out forwards;
+}
+
+/* Knight — a blade slash across the square. */
+.fx-flash-white {
+  width: 16px; height: 16px; margin: -8px 0 0 -8px;
+  background: radial-gradient(circle, #fff, rgba(255,255,255,0) 70%);
+  animation: fxFlash 0.25s ease-out forwards;
+}
+.fx-slash {
+  width: 60px; height: 6px; margin: -3px 0 0 -30px;
+  background: linear-gradient(90deg, transparent, #f4ecd8, #fff, #f4ecd8, transparent);
+  border-radius: 3px;
+  animation: fxSlash 0.4s ease-out forwards;
+}
+
+/* Bishop — a holy light burst: a glow plus rotating rays. */
+.fx-glow-gold {
+  width: 46px; height: 46px; margin: -23px 0 0 -23px;
+  background: radial-gradient(circle, rgba(255,241,189,0.95), rgba(230,195,81,0.35) 45%, transparent 72%);
+  animation: fxGlow 0.55s ease-out forwards;
+}
+.fx-rays-gold {
+  width: 60px; height: 60px; margin: -30px 0 0 -30px;
+  background: conic-gradient(
+    from 0deg,
+    transparent 0deg, rgba(255,241,189,0.55) 8deg, transparent 20deg,
+    transparent 40deg, rgba(255,241,189,0.55) 48deg, transparent 60deg,
+    transparent 100deg, rgba(255,241,189,0.55) 108deg, transparent 120deg,
+    transparent 160deg, rgba(255,241,189,0.55) 168deg, transparent 180deg,
+    transparent 220deg, rgba(255,241,189,0.55) 228deg, transparent 240deg,
+    transparent 280deg, rgba(255,241,189,0.55) 288deg, transparent 300deg,
+    transparent 340deg, rgba(255,241,189,0.55) 348deg, transparent 360deg
+  );
+  animation: fxRaySpin 0.55s ease-out forwards;
+}
+
+/* Rook — a heavy shattering impact: a shockwave ring plus flying debris. */
+.fx-ring-heavy {
+  width: 20px; height: 20px; margin: -10px 0 0 -10px;
+  border: 4px solid rgba(230,195,81,0.9);
+  background: transparent;
+  animation: fxRing 0.5s ease-out forwards;
+}
+.fx-debris {
+  width: 7px; height: 7px; margin: -3.5px 0 0 -3.5px;
+  background: var(--gold-bright);
+  border-radius: 2px;
+  animation: fxDebris 0.5s ease-out forwards;
+}
+
+/* Queen — a radiant burst with scattering sparkles. */
+.fx-glow-royal {
+  width: 44px; height: 44px; margin: -22px 0 0 -22px;
+  background: radial-gradient(circle, rgba(255,255,255,0.95), rgba(201,162,39,0.4) 50%, transparent 75%);
+  animation: fxGlow 0.5s ease-out forwards;
+}
+.fx-spark {
+  width: 5px; height: 5px; margin: -2.5px 0 0 -2.5px;
+  background: #fff;
+  box-shadow: 0 0 6px 1px var(--gold-bright);
+  animation: fxSpark 0.55s ease-out forwards;
+}
+
+/* King — a royal double shockwave. */
+.fx-flash-crimson {
+  width: 20px; height: 20px; margin: -10px 0 0 -10px;
+  background: radial-gradient(circle, rgba(255,255,255,0.95), rgba(216,90,60,0.5) 55%, transparent 75%);
+  animation: fxFlash 0.3s ease-out forwards;
+}
+.fx-ring-royal-1 {
+  width: 16px; height: 16px; margin: -8px 0 0 -8px;
+  border: 3px solid rgba(230,195,81,0.9);
+  animation: fxRing 0.6s ease-out forwards;
+}
+.fx-ring-royal-2 {
+  width: 16px; height: 16px; margin: -8px 0 0 -8px;
+  border: 3px solid rgba(216,90,60,0.85);
+  opacity: 0;
+  animation: fxRing 0.6s ease-out 0.08s forwards;
+}
+
+@keyframes fxFlash {
+  0% { opacity: 1; transform: scale(0.3); }
+  100% { opacity: 0; transform: scale(2.2); }
+}
+@keyframes fxJab {
+  0% { opacity: 0; transform: rotate(var(--ang, 0deg)) translateX(-6px) scaleX(0.4); }
+  30% { opacity: 1; }
+  100% { opacity: 0; transform: rotate(var(--ang, 0deg)) translateX(14px) scaleX(1); }
+}
+@keyframes fxSlash {
+  0% { opacity: 0; transform: rotate(-35deg) scaleX(0.2) translateX(-10px); }
+  35% { opacity: 1; }
+  100% { opacity: 0; transform: rotate(-35deg) scaleX(1.3) translateX(10px); }
+}
+@keyframes fxGlow {
+  0% { opacity: 0; transform: scale(0.3); }
+  40% { opacity: 1; }
+  100% { opacity: 0; transform: scale(1.6); }
+}
+@keyframes fxRaySpin {
+  0% { opacity: 0; transform: rotate(0deg) scale(0.5); }
+  40% { opacity: 1; }
+  100% { opacity: 0; transform: rotate(70deg) scale(1.3); }
+}
+@keyframes fxRing {
+  0% { opacity: 0.95; transform: scale(0.3); }
+  100% { opacity: 0; transform: scale(3.2); }
+}
+@keyframes fxDebris {
+  0% { opacity: 1; transform: translate(0, 0) rotate(0deg) scale(1); }
+  100% { opacity: 0; transform: translate(var(--dx, 20px), var(--dy, -20px)) rotate(200deg) scale(0.6); }
+}
+@keyframes fxSpark {
+  0% { opacity: 1; transform: translate(0, 0) scale(1); }
+  100% { opacity: 0; transform: translate(var(--dx, 20px), var(--dy, -20px)) scale(0.3); }
+}
+
 .promo-picker {
   position: absolute;
   top: 50%;

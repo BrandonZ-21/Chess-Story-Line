@@ -300,10 +300,12 @@ export function applyMoveUnchecked(state, move) {
   const piece = next.board[from.r][from.c];
   const color = piece.color;
   let captured = next.board[to.r][to.c] || null;
+  let capturedSquare = captured ? { r: to.r, c: to.c } : null;
 
   if (move.isEnPassant) {
     const capR = color === 'w' ? to.r - 1 : to.r + 1;
     captured = next.board[capR][to.c];
+    capturedSquare = { r: capR, c: to.c };
     next.board[capR][to.c] = null;
   }
 
@@ -348,7 +350,14 @@ export function applyMoveUnchecked(state, move) {
   next.enPassant = move.isDoubleStep ? { r: (from.r + to.r) / 2, c: from.c } : null;
 
   next.turn = opposite(color);
-  next.moveLog.push({ from, to, piece: { type: piece.type, color }, capture: !!captured });
+  next.moveLog.push({
+    from,
+    to,
+    piece: { type: piece.type, color },
+    capture: !!captured,
+    capturedSquare,
+    capturedType: captured ? captured.type : null,
+  });
 
   return next;
 }

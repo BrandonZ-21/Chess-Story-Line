@@ -13,6 +13,7 @@
 
 import { getLegalMovesForSquare } from '../rules.js';
 import { pieceMarkup } from './piece-art.js';
+import { captureEffectMarkup, CAPTURE_FX_DURATION_MS } from './capture-fx.js';
 
 const PROMO_CHOICES = [
   { type: 'q', label: 'Queen' },
@@ -35,6 +36,7 @@ export function createBoardView(root, options) {
   let legalTargets = [];
   let rigX = 55; // tilt, degrees — 0 = looking edge-on, 90 = straight down
   let rigY = 0; // spin, degrees — free-running, orbits all the way around
+  let lastAnimatedMove = null; // reference to the last moveLog entry we've already played a capture effect for
 
   const ROTATE_STEP_DEG = 6;
 
@@ -88,12 +90,31 @@ export function createBoardView(root, options) {
 
   function applyRig() {
     rig.style.transform = `rotateX(${rigX}deg) rotateY(${rigY}deg)`;
-    // Exact inverse of the rig's rotation, so glyphs stay flat-on to the
-    // camera no matter how the board has been spun/tilted.
+    // Exact inverse of the rig's rotation, so glyphs (and capture effects)
+    // stay flat-on to the camera no matter how the board has been
+    // spun/tilted.
     const billboard = `rotateY(${-rigY}deg) rotateX(${-rigX}deg)`;
     piecesLayer.querySelectorAll('.piece-glyph').forEach((el) => {
       el.style.transform = billboard;
     });
+    piecesLayer.querySelectorAll('.capture-fx').forEach((el) => {
+      el.style.transform = `translateZ(4px) ${billboard}`;
+    });
+  }
+
+  function spawnCaptureEffect(capturedSquare, byType, cellSize) {
+    if (!capturedSquare) return;
+    // boardCoordsFromDisplay is its own inverse (swapping row/col for c/r
+    // is the same formula either direction), so it also converts a board
+    // square back to display coordinates.
+    const { r: dispRow, c: dispCol } = boardCoordsFromDisplay(capturedSquare.r, capturedSquare.c);
+    const fx = document.createElement('div');
+    fx.className = `capture-fx fx-${byType}`;
+    fx.style.left = `${dispCol * cellSize + cellSize / 2}px`;
+    fx.style.top = `${dispRow * cellSize + cellSize / 2}px`;
+    fx.innerHTML = captureEffectMarkup(byType);
+    piecesLayer.appendChild(fx);
+    setTimeout(() => fx.remove(), CAPTURE_FX_DURATION_MS);
   }
 
   // dx/dy are directions, not degrees: -1/0/1. Shared by the arrow keys and
@@ -191,6 +212,12 @@ export function createBoardView(root, options) {
         }
       }
     }
+
+    if (lastMove && lastMove.capture && lastMove !== lastAnimatedMove) {
+      lastAnimatedMove = lastMove;
+      spawnCaptureEffect(lastMove.capturedSquare, lastMove.piece.type, cellSize);
+    }
+
     applyRig();
   }
 
