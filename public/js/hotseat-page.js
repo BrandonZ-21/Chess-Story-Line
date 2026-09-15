@@ -1,10 +1,14 @@
 import { createInitialState, applyMove, getGameStatus } from '../rules.js';
 import { createBoardView } from './board-ui.js';
+import { createBuffPanel } from './buff-panel.js';
 
 let state = createInitialState(true);
 
 const statusEl = document.getElementById('status');
 const root = document.getElementById('board-root');
+const panelRoot = document.getElementById('buff-panel');
+
+const panel = createBuffPanel(panelRoot, { getState: () => state });
 
 const view = createBoardView(root, {
   getState: () => state,
@@ -17,6 +21,7 @@ const view = createBoardView(root, {
     if (next) {
       state = next;
       updateStatus();
+      panel.render();
     }
   },
 });
@@ -39,6 +44,7 @@ document.getElementById('new-game').addEventListener('click', () => {
   state = createInitialState(true);
   view.clearSelection();
   updateStatus();
+  panel.render();
 });
 
 updateStatus();

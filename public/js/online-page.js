@@ -1,10 +1,12 @@
 import { createBoardView } from './board-ui.js';
+import { createBuffPanel } from './buff-panel.js';
 import { connectRoom } from './online-client.js';
 
 let state = null;
 let gameStatus = null;
 let myRole = null;
 let view = null;
+let panel = null;
 let room = null;
 
 const joinEl = document.getElementById('join');
@@ -13,6 +15,7 @@ const statusEl = document.getElementById('status');
 const presenceEl = document.getElementById('presence');
 const roleEl = document.getElementById('role');
 const root = document.getElementById('board-root');
+const panelRoot = document.getElementById('buff-panel');
 const codeInput = document.getElementById('room-code');
 
 document.getElementById('join-btn').addEventListener('click', () => {
@@ -45,6 +48,7 @@ function handleMessage(msg) {
   } else if (msg.type === 'state') {
     applyState(msg.payload);
     if (view) view.render();
+    if (panel) panel.render();
   } else if (msg.type === 'presence') {
     presenceEl.textContent = `White: ${msg.payload.white ? 'connected' : 'waiting'} · Black: ${msg.payload.black ? 'connected' : 'waiting'} · Watching: ${msg.payload.spectators}`;
   } else if (msg.type === 'error') {
@@ -59,6 +63,8 @@ function applyState(s) {
 }
 
 function ensureView() {
+  if (!panel) panel = createBuffPanel(panelRoot, { getState: () => state });
+  else panel.render();
   if (view) { view.render(); return; }
   view = createBoardView(root, {
     getState: () => state,

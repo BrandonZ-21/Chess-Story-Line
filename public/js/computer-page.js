@@ -1,15 +1,18 @@
 import { createInitialState, applyMove, getGameStatus } from '../rules.js';
 import { createBoardView } from './board-ui.js';
+import { createBuffPanel } from './buff-panel.js';
 import { pickComputerMove } from './ai.js';
 
 let state = null;
 let humanColor = 'w';
 let view = null;
+let panel = null;
 
 const setupEl = document.getElementById('setup');
 const gameEl = document.getElementById('game');
 const statusEl = document.getElementById('status');
 const root = document.getElementById('board-root');
+const panelRoot = document.getElementById('buff-panel');
 
 document.querySelectorAll('[data-side]').forEach((btn) => {
   btn.addEventListener('click', () => {
@@ -43,10 +46,13 @@ function startGame() {
       if (next) {
         state = next;
         updateStatus();
+        panel.render();
         maybeComputerMove();
       }
     },
   });
+  if (!panel) panel = createBuffPanel(panelRoot, { getState: () => state });
+  else panel.render();
 
   updateStatus();
   maybeComputerMove();
@@ -63,6 +69,7 @@ function maybeComputerMove() {
     }
     view.render();
     updateStatus();
+    panel.render();
   }, 50);
 }
 
