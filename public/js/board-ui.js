@@ -3,11 +3,13 @@
 //
 // The board is built with CSS 3D transforms (perspective + rotateX/rotateY),
 // not a graphics library — it's still "plain HTML, CSS and JavaScript."
-// Dragging the mouse orbits the whole scene (rotateX for tilt, rotateY for
-// spinning around the board); pieces stand up off the board on a small
-// vertical "lift" and counter-rotate every frame so their glyphs always
-// face the camera (a standard CSS-3D "billboard" trick), no matter which
-// way the board is currently turned.
+// The arrow keys orbit the whole scene (left/right spin, up/down tilt);
+// the mouse is reserved entirely for clicking pieces and squares, so
+// there's no ambiguity between "trying to click" and "trying to look
+// around" the way there was with mouse-drag orbiting. Pieces stand up off
+// the board on a small vertical "lift" and counter-rotate every frame so
+// their glyphs always face the camera (a standard CSS-3D "billboard"
+// trick), no matter which way the board is currently turned.
 
 import { getLegalMovesForSquare } from '../rules.js';
 import { pieceMarkup } from './piece-art.js';
@@ -33,13 +35,8 @@ export function createBoardView(root, options) {
   let legalTargets = [];
   let rigX = 55; // tilt, degrees — 0 = looking edge-on, 90 = straight down
   let rigY = 0; // spin, degrees — free-running, orbits all the way around
-  let pointerDown = false; // true from pointerdown to pointerup, regardless of movement
-  let dragging = false; // true only once movement has crossed DRAG_THRESHOLD_PX
-  let lastPointer = null;
-  let downPointer = null;
-  let suppressNextClick = false;
 
-  const DRAG_THRESHOLD_PX = 6; // a click that wobbles less than this still counts as a click
+  const ROTATE_STEP_DEG = 6;
 
   root.classList.add('board-root');
 
@@ -58,8 +55,28 @@ export function createBoardView(root, options) {
 
   const hint = document.createElement('p');
   hint.className = 'drag-hint';
-  hint.textContent = 'Drag the board to look around while you play.';
+  hint.textContent = 'Use the arrow keys (or these buttons) to look around the board — click to move.';
   root.appendChild(hint);
+
+  const controls = document.createElement('div');
+  controls.className = 'camera-controls';
+  controls.setAttribute('aria-label', 'Rotate the board view');
+  const buttonSpecs = [
+    { label: '←', title: 'Look left', dy: 0, dx: -1 },
+    { label: '↑', title: 'Look up', dy: -1, dx: 0 },
+    { label: '↓', title: 'Look down', dy: 1, dx: 0 },
+    { label: '→', title: 'Look right', dy: 0, dx: 1 },
+  ];
+  for (const spec of buttonSpecs) {
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'camera-btn';
+    btn.textContent = spec.label;
+    btn.title = spec.title;
+    btn.addEventListener('click', () => rotateCamera(spec.dx, spec.dy));
+    controls.appendChild(btn);
+  }
+  root.appendChild(controls);
 
   const promoEl = document.createElement('div');
   promoEl.className = 'promo-picker hidden';
@@ -79,56 +96,34 @@ export function createBoardView(root, options) {
     });
   }
 
-  scene.addEventListener('pointerdown', (e) => {
-    pointerDown = true;
-    dragging = false;
-    downPointer = { x: e.clientX, y: e.clientY };
-    lastPointer = { x: e.clientX, y: e.clientY };
-    scene.setPointerCapture(e.pointerId);
-  });
-  scene.addEventListener('pointermove', (e) => {
-    if (!pointerDown) return;
-    if (!dragging) {
-      // Don't start rotating until the pointer has actually moved — a
-      // click that wobbles a couple pixels should still select the square,
-      // not spin the board out from under it.
-      const totalDx = e.clientX - downPointer.x;
-      const totalDy = e.clientY - downPointer.y;
-      if (Math.hypot(totalDx, totalDy) < DRAG_THRESHOLD_PX) return;
-      dragging = true;
-      scene.classList.add('grabbing');
-    }
-    const dx = e.clientX - lastPointer.x;
-    const dy = e.clientY - lastPointer.y;
-    lastPointer = { x: e.clientX, y: e.clientY };
-    rigY += dx * 0.4;
-    rigX = Math.max(20, Math.min(85, rigX - dy * 0.3));
+  // dx/dy are directions, not degrees: -1/0/1. Shared by the arrow keys and
+  // the on-screen buttons (for touch devices, which have no arrow keys).
+  function rotateCamera(dx, dy) {
+    rigY += dx * ROTATE_STEP_DEG;
+    rigX = Math.max(20, Math.min(85, rigX + dy * ROTATE_STEP_DEG));
     applyRig();
-  });
-  const stopDrag = () => {
-    pointerDown = false;
-    if (dragging) {
-      // A real drag just happened — swallow the click that's about to
-      // fire on whatever square the pointer happens to be over now, so
-      // letting go of a drag never also selects/moves a piece.
-      suppressNextClick = true;
+  }
+
+  // Arrow keys orbit the camera; the mouse is left alone entirely for
+  // clicking. Skip handling when the player is typing somewhere else on
+  // the page (e.g. the online room-code field) so arrow keys still work
+  // normally there.
+  function isTypingTarget(el) {
+    return el && (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA' || el.isContentEditable);
+  }
+  window.addEventListener('keydown', (e) => {
+    if (isTypingTarget(document.activeElement)) return;
+    if (e.ctrlKey || e.metaKey || e.altKey) return;
+    switch (e.key) {
+      case 'ArrowLeft': rotateCamera(-1, 0); break;
+      case 'ArrowRight': rotateCamera(1, 0); break;
+      case 'ArrowUp': rotateCamera(0, -1); break;
+      case 'ArrowDown': rotateCamera(0, 1); break;
+      default: return;
     }
-    dragging = false;
-    scene.classList.remove('grabbing');
-  };
-  scene.addEventListener('pointerup', stopDrag);
-  scene.addEventListener('pointerleave', stopDrag);
-  scene.addEventListener('pointercancel', stopDrag);
-  scene.addEventListener(
-    'click',
-    (e) => {
-      if (!suppressNextClick) return;
-      suppressNextClick = false;
-      e.stopPropagation();
-      e.preventDefault();
-    },
-    true
-  );
+    e.preventDefault();
+  });
+
   window.addEventListener('resize', () => render());
 
   function clearSelection() {

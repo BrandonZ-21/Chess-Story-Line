@@ -269,12 +269,8 @@ a { color: inherit; }
   width: min(92vw, 520px);
   aspect-ratio: 1 / 1;
   perspective: 1400px;
-  cursor: grab;
-  touch-action: none;
   user-select: none;
 }
-
-.scene.grabbing { cursor: grabbing; }
 
 .rig {
   position: relative;
@@ -355,6 +351,28 @@ a { color: inherit; }
   opacity: 0.6;
   text-align: center;
 }
+
+.camera-controls {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  max-width: 220px;
+  margin: 10px auto 0;
+}
+
+.camera-btn {
+  background: var(--iron);
+  border: 1px solid rgba(201,162,39,0.35);
+  color: var(--gold-bright);
+  border-radius: 6px;
+  padding: 8px 0;
+  font-size: 15px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.camera-btn:hover { background: rgba(201,162,39,0.15); }
+.camera-btn:active { transform: translateY(1px); }
 
 /* Pieces stand up off the board on a "lift" and counter-rotate (billboard)
    so the glyph always faces the camera, however the board is turned. */
